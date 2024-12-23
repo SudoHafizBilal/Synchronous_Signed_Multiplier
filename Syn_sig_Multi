@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int Half_adder(int a, int b);
+int twos_complement(int num);
+int32_t signed_multiplier(int32_t multiplicand , int32_t multiplier);
+
+int main(void){
+	int16_t multiplicand, multiplier;
+	printf("Enter Multiplicand : ");
+	scanf("%hd",&multiplicand);
+	printf("Enter Multiplier : ");
+	scanf("%hd",&multiplier);
+	int32_t result = signed_multiplier(multiplicand,multiplier);
+	printf("Product is %d \n",result);
+	return 0;
+}
+
+int Half_adder(int a, int b){
+	int sum;
+	int carry;
+	while (b != 0){
+	sum = a ^ b;
+	carry = a & b;
+	a = sum;
+	b = carry << 1;
+	}
+	return a;
+}
+
+
+int twos_complement(int num){
+	int neg;
+	neg = Half_adder(~num,1);
+	return neg;
+}
+	
+int32_t signed_multiplier(int32_t multiplicand , int32_t multiplier){
+	int n = 16;
+	int neg=0;
+	int32_t answer = 0;
+	if (multiplicand < 0)
+	{
+		multiplicand = twos_complement(multiplicand);
+		neg = !neg;
+	}
+	if (multiplier < 0)
+	{
+		multiplier = twos_complement(multiplier);
+		neg = !neg;
+	}
+	for(int i = 0 ; i<n; i++) 
+	{
+		if (multiplier & 1)
+		{
+			answer = Half_adder(answer,multiplicand);
+		}
+		else 
+		{
+			answer = answer;
+		}
+		multiplicand <<= 1;
+		multiplier >>= 1;
+	}
+	
+	if (neg)
+	{
+		answer = twos_complement(answer);
+	}
+	return answer;
+}
+
+	
+	
